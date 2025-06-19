@@ -65,6 +65,13 @@
                     </span>
                     <span class="like">👍 112</span>
                     <span class="share">🔗 compartilhar</span>
+
+                    <a href="{{ url('/ocorrencia/editar/' . $ocorrencia->id) }}">
+    <div class="card mb-3">
+        <!-- Conteúdo da ocorrência -->
+    </div>
+</a>
+
                 </div>
             </div>
         @empty
