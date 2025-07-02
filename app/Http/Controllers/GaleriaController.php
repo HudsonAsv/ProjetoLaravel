@@ -6,15 +6,18 @@ use Illuminate\Http\Request;
 use App\Models\Ocorrencia;
 use App\Models\Categoria;
 use App\Models\Tema;
-use App\Models\Comentario;
-
 
 class GaleriaController extends Controller
 {
+    public function show($id)
+{
+    $ocorrencia = \App\Models\Ocorrencia::with('categoria', 'tema', 'atualizacaos')->findOrFail($id);
+    return view('detalhes', compact('ocorrencia'));
+}
+
     public function index(Request $request)
     {
         $query = Ocorrencia::query();
-
         if ($request->filled('mes')) {
             $query->whereMonth('data_solicitacao', $request->mes);
         }
@@ -69,52 +72,4 @@ class GaleriaController extends Controller
 
         return redirect('/galeria')->with('success', 'Ocorrência cadastrada com sucesso!');
     }
-
-    public function show($id)
-{
-    $ocorrencia = Ocorrencia::with('comentarios')->findOrFail($id);
-    return view('galeria.show', compact('ocorrencia'));
-}
-
-
-    public function edit($id)
-    {
-        $ocorrencia = Ocorrencia::findOrFail($id);
-        return view('ocorrencias.editar', compact('ocorrencia'));
-    }
-
-    public function update(Request $request, $id)
-{
-    $ocorrencia = Ocorrencia::findOrFail($id);
-    $ocorrencia->status = $request->status;
-    $ocorrencia->save();
-
-    return redirect('/')->with('success', 'Status atualizado com sucesso!');
-}
-
-
-public function adicionarComentario(Request $request, $id)
-{
-    $request->validate([
-        'autor' => 'nullable|string|max:50',
-        'mensagem' => 'required|string|max:500',
-    ]);
-
-    Comentario::create([
-        'ocorrencia_id' => $id,
-        'autor' => $request->autor ?? 'Anônimo',
-        'mensagem' => $request->mensagem
-    ]);
-
-    return back()->with('success', 'Comentário adicionado.');
-}
-
-
-public function deletarComentario($id)
-{
-    Comentario::findOrFail($id)->delete();
-    return back()->with('success', 'Comentário excluído.');
-}
-
-
 }

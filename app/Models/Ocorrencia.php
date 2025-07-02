@@ -10,13 +10,8 @@ class Ocorrencia extends Model
 {
     protected $fillable = [
         'titulo', 'descricao', 'localizacao', 'status',
-        'categoria_id', 'tema_id', 'imagem'
+        'categoria_id', 'tema_id', 'imagem', 'data_solicitacao'
     ];
-
-    protected $casts = [
-    'data_solicitacao' => 'datetime',
-];
-
 
 public function categoria()
 {
@@ -32,11 +27,5 @@ public function atualizacaos() // ou 'atualizacoes' se for o nome correto da tab
 {
     return $this->hasMany(\App\Models\Atualizacao::class);
 }
-
-public function comentarios()
-{
-    return $this->hasMany(Comentario::class);
-}
-
 
 }

@@ -198,33 +198,31 @@
 
     <!---RECENTES---->
     <h2 style="margin-top: 40px;">Ocorrências Recentes</h2>
+
 <div class="galeria-grid">
     @foreach ($recentes as $ocorrencia)
-        <a href="{{ url('/galeria/' . $ocorrencia->id) }}" style="text-decoration: none; color: inherit;">
-            <div class="galeria-card">
-                <div class="imagem-thumb">
-                    <img src="{{ $ocorrencia->imagem }}" alt="Imagem da Ocorrência">
-                </div>
-                <h3>{{ $ocorrencia->titulo ?? 'Sem título' }}</h3>
+        <div class="galeria-card">
+            <div class="imagem-thumb">
+                <img src="{{ $ocorrencia->imagem }}" alt="Imagem da Ocorrência">
 
-                <div class="tags">
-                    <span class="tag">{{ $ocorrencia->tema->nome ?? 'Tema' }}</span>
-                    <span class="tag">{{ $ocorrencia->categoria->nome ?? 'Categoria' }}</span>
-                </div>
-
-                <p class="localizacao">📍 {{ $ocorrencia->localizacao }}</p>
-                <p class="status">Status: {{ ucfirst($ocorrencia->status) }}</p>
-
-                <div class="infos">
-                    <span class="data">📅 {{ \Carbon\Carbon::parse($ocorrencia->data_solicitacao)->format('d M Y') }}</span>
-                    <span class="like">👍 112</span>
-                    <span class="share">🔗 compartilhar</span>
-                </div>
             </div>
-        </a>
+            <h3>{{ $ocorrencia->titulo ?? 'Sem título' }}</h3>
+
+            <div class="tags">
+                <span class="tag">{{ $ocorrencia->tema->nome ?? 'Tema' }}</span>
+                <span class="tag">{{ $ocorrencia->categoria->nome ?? 'Categoria' }}</span>
+            </div>
+
+            <p class="localizacao">📍 {{ $ocorrencia->localizacao }}</p>
+            <p class="status">Status: {{ ucfirst($ocorrencia->status) }}</p>
+
+            <div class="infos">
+                <span class="data">📅 {{ \Carbon\Carbon::parse($ocorrencia->data_solicitacao)->format('d M Y') }}</span>
+                <span class="like">👍 112</span>
+                <span class="share">🔗 compartilhar</span>
+            </div>
+        </div>
     @endforeach
 </div>
-
-
 
 @endsection

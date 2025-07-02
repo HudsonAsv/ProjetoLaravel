@@ -22,20 +22,11 @@ Route::post('/admin/atualizar/{id}', [AdminController::class, 'update']);
 //novos dados
 Route::get('/ocorrencia/criar', [GaleriaController::class, 'create']);
 Route::post('/ocorrencia/salvar', [GaleriaController::class, 'store']);
-
-Route::get('/ocorrencia/editar/{id}', [GaleriaController::class, 'show']);
-Route::put('/ocorrencia/atualizar/{id}', [GaleriaController::class, 'update']);
-
-
-// Salvar edição do status
-Route::post('/ocorrencia/atualizar/{id}', [GaleriaController::class, 'update']);
-
+    // ... outras rotas protegidas
 });
 
-//Comentarios
-Route::get('/galeria/{id}', [GaleriaController::class, 'show']);
-Route::post('/comentario/{id}', [GaleriaController::class, 'adicionarComentario'])->name('comentarios.adicionar');
-Route::delete('/comentario/{id}', [GaleriaController::class, 'deletarComentario'])->name('comentarios.deletar');
+
+
 
 // Rotas públicas
 Route::get('/login', function () {
