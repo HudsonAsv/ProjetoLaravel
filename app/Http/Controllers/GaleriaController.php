@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Ocorrencia;
 use App\Models\Categoria;
 use App\Models\Tema;
+use App\Services\ImageModerationService;
+
 
 class GaleriaController extends Controller
 {
@@ -46,30 +48,43 @@ class GaleriaController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'titulo' => 'required|string|max:100',
-            'descricao' => 'required|string',
-            'localizacao' => 'required|string',
-            'status' => 'required|string',
-            'categoria_id' => 'required|exists:categorias,id',
-            'tema_id' => 'required|exists:temas,id',
-            'imagem' => 'required|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
+{
+    // Valida antes de qualquer coisa
+    $request->validate([
+        'titulo' => 'required|string|max:100',
+        'descricao' => 'required|string',
+        'localizacao' => 'required|string',
+        'status' => 'required|string',
+        'categoria_id' => 'required|exists:categorias,id',
+        'tema_id' => 'required|exists:temas,id',
+        'imagem' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
 
-        $imagemPath = $request->file('imagem')->store('ocorrencias', 'public');
+    // Armazena imagem
+    $imagemPath = $request->file('imagem')->store('ocorrencias', 'public');
+    $imageUrl = asset('storage/' . $imagemPath);
 
-        Ocorrencia::create([
-            'titulo' => $request->titulo,
-            'descricao' => $request->descricao,
-            'localizacao' => $request->localizacao,
-            'status' => $request->status,
-            'categoria_id' => $request->categoria_id,
-            'tema_id' => $request->tema_id,
-            'imagem' => $imagemPath,
-            'data_solicitacao' => now(),
-        ]);
+    // Analisa com o serviço
+    $moderator = new ImageModerationService();
+    $resultado = $moderator->moderateFromUrl($imageUrl);
 
-        return redirect('/galeria')->with('success', 'Ocorrência cadastrada com sucesso!');
+    if (!empty($resultado['nudity']) && $resultado['nudity']['raw'] > 0.7) {
+        return back()->withErrors(['imagem' => 'A imagem foi considerada imprópria.']);
     }
+
+    // Cria a ocorrência
+    Ocorrencia::create([
+        'titulo' => $request->titulo,
+        'descricao' => $request->descricao,
+        'localizacao' => $request->localizacao,
+        'status' => $request->status,
+        'categoria_id' => $request->categoria_id,
+        'tema_id' => $request->tema_id,
+        'imagem' => $imagemPath,
+        'data_solicitacao' => now(),
+    ]);
+
+    return redirect('/galeria')->with('success', 'Ocorrência cadastrada com sucesso!');
+}
+
 }
