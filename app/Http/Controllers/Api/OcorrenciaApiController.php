@@ -31,7 +31,7 @@ class OcorrenciaApiController extends Controller
             'status' => 'required|string',
             'categoria_id' => 'required|exists:categorias,id',
             'tema_id' => 'required|exists:temas,id',
-            'imagem' => 'nullable|image|max:2048',
+            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($request->hasFile('imagem')) {

@@ -13,6 +13,13 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         // você pode adicionar middlewares globais aqui
+           $middleware->alias([
+        'cors' => \Illuminate\Http\Middleware\HandleCors::class,
+    ]);
+
+    $middleware->api(append: [
+        \Illuminate\Http\Middleware\HandleCors::class,
+    ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         // você pode personalizar tratamento de exceções aqui
