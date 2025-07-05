@@ -8,6 +8,7 @@ use App\Http\Controllers\AdminController;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\ComentarioController;
 
 
 
@@ -22,6 +23,8 @@ Route::post('/admin/atualizar/{id}', [AdminController::class, 'update']);
 //novos dados
 Route::get('/ocorrencia/criar', [GaleriaController::class, 'create']);
 Route::post('/ocorrencia/salvar', [GaleriaController::class, 'store']);
+Route::post('/comentarios', [ComentarioController::class, 'store'])->name('comentario.store');
+
     // ... outras rotas protegidas
 });
 

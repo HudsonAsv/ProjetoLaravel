@@ -47,7 +47,7 @@ class OcorrenciaSeeder extends Seeder
                 'status' => collect(['concluido', 'em andamento', 'atrasado'])->random(),
                 'categoria_id' => Categoria::inRandomOrder()->first()->id,
                 'tema_id' => Tema::inRandomOrder()->first()->id,
-                'imagem' => 'storage/images/image_occurrence.jpg',
+                'imagem' => 'https://www.manageradm.com.br/wp-content/uploads/2019/09/livro-de-ocorrencias.jpg',
                 'data_solicitacao' => now()->subDays(rand(0, 60))
             ]);
         }

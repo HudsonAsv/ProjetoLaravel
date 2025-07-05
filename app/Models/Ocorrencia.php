@@ -28,4 +28,10 @@ public function atualizacaos() // ou 'atualizacoes' se for o nome correto da tab
     return $this->hasMany(\App\Models\Atualizacao::class);
 }
 
+public function comentarios()
+{
+    return $this->hasMany(\App\Models\Comentario::class);
+}
+
+
 }
