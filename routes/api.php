@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Response;
 use App\Http\Controllers\Api\AuthController;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Api\DataController;
+use App\Http\Controllers\ComentarioController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -17,16 +18,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/ocorrencias', [OcorrenciaApiController::class, 'index']);
     Route::get('/ocorrencias/{id}', [OcorrenciaApiController::class, 'show']);
     Route::post('/ocorrencias', [OcorrenciaApiController::class, 'store']);
-
+    Route::get('/minhas-ocorrencias', [OcorrenciaApiController::class, 'minhasOcorrencias']);
     Route::post('/logout', [AuthController::class, 'logout']);
-
+    Route::get('/ocorrencias/{ocorrencia}/comentarios', [ComentarioController::class, 'index']);
+    Route::post('/ocorrencias/{ocorrencia}/comentarios', [ComentarioController::class, 'store']);
     // Route::get('/user', function (Request $request) {
     //     return $request->user();
     // });
 });
 
 Route::get('/images/{filename}', function ($filename) {
-    $path = 'images/' . $filename;
+    $path = 'ocorrencias/' . $filename;
 
     if (!Storage::disk('public')->exists($path)) {
         abort(404);

@@ -6,8 +6,8 @@ use Illuminate\Database\Seeder;
 use App\Models\Categoria;
 use App\Models\Tema;
 use App\Models\Ocorrencia;
-use Illuminate\Support\Facades\DB;
-use App\Models\Atualizacao;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class OcorrenciaSeeder extends Seeder
 {
@@ -16,6 +16,14 @@ class OcorrenciaSeeder extends Seeder
         Ocorrencia::query()->delete();
         Categoria::query()->delete();
         Tema::query()->delete();
+        User::query()->delete();
+
+        $testUser = User::create([
+            'name' => 'User Teste',
+            'email' => 'teste@email.com',
+            'password' => Hash::make('1'),
+        ]);
+
         $categorias = [
             'Denúncia', 'Elogio', 'Informação',
             'Reclamação', 'Solicitação'
@@ -50,8 +58,9 @@ class OcorrenciaSeeder extends Seeder
                 'status' => collect(['recebido', 'em_analise', 'em_andamento', 'concluido', 'atrasado'])->random(),
                 'categoria_id' => Categoria::inRandomOrder()->first()->id,
                 'tema_id' => Tema::inRandomOrder()->first()->id,
-                'imagem' => 'images/image_occurrence.jpg',
-                'data_solicitacao' => now()->subDays(rand(0, 60))
+                'imagem' => 'ocorrencias/image_occurrence.jpg',
+                'data_solicitacao' => $dataSolicitacao,
+                'user_id' => $testUser->id
             ]);
         }
     }

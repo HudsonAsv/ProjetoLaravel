@@ -201,6 +201,7 @@
 
 <div class="galeria-grid">
     @foreach ($recentes as $ocorrencia)
+    <a href="{{ url('/ocorrencia/' . $ocorrencia->id) }}" style="text-decoration: none; color: inherit;">
         <div class="galeria-card">
             <div class="imagem-thumb">
                 <img src="{{  Storage::url($ocorrencia->imagem)  }}" alt="Imagem da Ocorrência">

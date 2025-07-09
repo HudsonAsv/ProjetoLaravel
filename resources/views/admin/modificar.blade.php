@@ -15,7 +15,7 @@
         <label>Status:</label>
         <select name="status">
             <option value="concluido">Concluído</option>
-            <option value="em andamento" selected>Em andamento</option>
+            <option value="em_andamento" selected>Em andamento</option>
             <option value="atrasado">Atrasado</option>
         </select><br><br>
 

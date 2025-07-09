@@ -29,6 +29,7 @@ return new class extends Migration
         $table->string('imagem')->nullable();
         $table->foreignId('categoria_id')->constrained()->onDelete('cascade');
         $table->foreignId('tema_id')->constrained()->onDelete('cascade');
+        $table->foreignId('user_id')->constrained()->onDelete('cascade');
         $table->timestamps();
     });
 }

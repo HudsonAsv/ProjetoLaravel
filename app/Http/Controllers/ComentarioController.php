@@ -2,41 +2,46 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Models\Comentario;
+use App\Models\Ocorrencia; // Importe o modelo Ocorrencia
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
 class ComentarioController extends Controller
 {
-    public function store(Request $request)
+    public function index(Ocorrencia $ocorrencia)
+    {
+        $comentarios = $ocorrencia->comentarios()->with('user:id,name')->latest()->get();
+        return response()->json($comentarios);
+    }
+
+    public function store(Request $request, Ocorrencia $ocorrencia)
     {
         $request->validate([
             'ocorrencia_id' => 'required|exists:ocorrencias,id',
-            'autor' => 'required|string|max:100',
-            'mensagem' => 'required|string|max:1000',
+            'conteudo' => 'required|string|max:1000',
         ]);
 
-        // Chamada à Perspective API
-        
-$response = Http::withOptions([
-    'verify' => false, // Desativa verificação do certificado SSL
-])->post("https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=" . env('PERSPECTIVE_API_KEY'), [
-    "comment" => ["text" => $request->mensagem],
-    "requestedAttributes" => ["TOXICITY" => new \stdClass()],
-]);
+        $perspectiveKey = env('PERSPECTIVE_API_KEY');
+        if ($perspectiveKey) {
+            $response = Http::post("https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=" . $perspectiveKey, [
+                "comment" => ["text" => $request['conteudo']],
+                "requestedAttributes" => ["TOXICITY" => new \stdClass()],
+            ]);
 
-        // Extrai o score de toxicidade
-        $score = $response['attributeScores']['TOXICITY']['summaryScore']['value'] ?? 0;
+            $score = $response->json('attributeScores.TOXICITY.summaryScore.value');
 
-        // Bloqueia se score for alto
-        if ($score >= 0.7) {
-            return back()->withErrors(['mensagem' => 'Comentário considerado ofensivo e foi bloqueado.']);
+            if ($score >= 0.7) {
+                return response()->json(['message' => 'O seu comentário foi considerado inadequado e foi bloqueado.'], 422); // 422 Unprocessable Entity
+            }
         }
 
         Comentario::create([
             'ocorrencia_id' => $request->ocorrencia_id,
-            'autor' => $request->autor,
-            'mensagem' => $request->mensagem,
+            'user_id' => Auth::id(), // Isto agora funcionará, pois a rota está protegida.
+            'conteudo' => $request->conteudo,
         ]);
 
         return redirect()->back()->with('success', 'Comentário enviado com sucesso!');
