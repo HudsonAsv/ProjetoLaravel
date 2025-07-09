@@ -6,48 +6,51 @@ use Illuminate\Database\Seeder;
 use App\Models\Categoria;
 use App\Models\Tema;
 use App\Models\Ocorrencia;
-
-
 use Illuminate\Support\Facades\DB;
 use App\Models\Atualizacao;
-
-
-
 
 class OcorrenciaSeeder extends Seeder
 {
     public function run()
     {
-        // Criar categorias
+        Ocorrencia::query()->delete();
+        Categoria::query()->delete();
+        Tema::query()->delete();
         $categorias = [
-            'Infraestrutura', 'Iluminação Pública', 'Limpeza Urbana',
-            'Transporte', 'Saúde', 'Educação', 'Segurança', 'Meio Ambiente'
+            'Denúncia', 'Elogio', 'Informação',
+            'Reclamação', 'Solicitação'
         ];
 
         foreach ($categorias as $nome) {
             Categoria::updateOrCreate(['nome' => $nome], []);
         }
 
-        // Criar temas
         $temas = [
-            'Vias Públicas', 'Postes', 'Coleta de Lixo', 'Transporte Escolar',
-            'Hospitais', 'Escolas', 'Policiamento', 'Praças', 'Saneamento'
+            'Infraestrutura', 'Saúde', 'Segurança Pública', 'Meio Ambiente',
+            'Trânsito e Mobilidade', 'Bem-estar Animal', 'Serviços Públicos', 'Educação', 'Assistência Social'
         ];
 
         foreach ($temas as $nome) {
             Tema::updateOrCreate(['nome' => $nome], []);
         }
 
-        // Criar ocorrências variadas
-        foreach (range(1, 50) as $i) {
+        foreach (range(1, 25) as $i) {
+            $tema = Tema::inRandomOrder()->first();
+            $dataSolicitacao = now()->subDays(rand(0, 60));
+            $tituloGerado = "Ocorrência - " . $tema->nome . " - " . $dataSolicitacao->format('d/m/Y');
             Ocorrencia::create([
-                'titulo' => "Ocorrência $i",
+                'titulo' => "$tituloGerado",
                 'descricao' => 'Descrição fictícia da ocorrência número ' . $i,
-                'localizacao' => 'Rua Exemplo ' . rand(1, 100),
-                'status' => collect(['concluido', 'em andamento', 'atrasado'])->random(),
+                'rua' => 'Rua ' . ($i % 2 == 0 ? 'Dom Aquino' : 'Frei Mariano'),
+                'numero' => rand(100, 2000),
+                'bairro' => ($i % 2 == 0 ? 'Centro' : 'Popular Velha'),
+                'referencia' => 'Próximo ao ' . ($i % 2 == 0 ? 'Jardim da Independência' : 'Porto Geral'),
+                'latitude' => -19.0094 + (rand(-50, 50) / 10000),
+                'longitude' => -57.6533 + (rand(-50, 50) / 10000),
+                'status' => collect(['recebido', 'em_analise', 'em_andamento', 'concluido', 'atrasado'])->random(),
                 'categoria_id' => Categoria::inRandomOrder()->first()->id,
                 'tema_id' => Tema::inRandomOrder()->first()->id,
-                'imagem' => 'https://www.manageradm.com.br/wp-content/uploads/2019/09/livro-de-ocorrencias.jpg',
+                'imagem' => 'images/image_occurrence.jpg',
                 'data_solicitacao' => now()->subDays(rand(0, 60))
             ]);
         }

@@ -15,8 +15,16 @@ return new class extends Migration
         $table->id();
         $table->string('titulo');
         $table->text('descricao');
-        $table->string('localizacao');
-        $table->enum('status', ['concluido', 'em andamento', 'atrasado'])->default('em andamento');
+
+        $table->string('rua');
+        $table->string('numero')->nullable();
+        $table->string('bairro');
+        $table->text('referencia')->nullable();
+
+        $table->decimal('latitude', 10, 8);
+        $table->decimal('longitude', 11, 8);
+
+        $table->enum('status', ['recebido', 'em_analise', 'em_andamento', 'concluido','atrasado'])->default('recebido');
         $table->date('data_solicitacao');
         $table->string('imagem')->nullable();
         $table->foreignId('categoria_id')->constrained()->onDelete('cascade');

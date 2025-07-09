@@ -3,23 +3,41 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\OcorrenciaApiController;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
+use App\Http\Controllers\Api\AuthController;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\Api\DataController;
 
-Route::get('ocorrencias', [OcorrenciaApiController::class, 'index']);
-Route::get('ocorrencias/{id}', [OcorrenciaApiController::class, 'show']);
-Route::post('ocorrencias', [OcorrenciaApiController::class, 'store']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::get('/categorias', [DataController::class, 'getCategorias']);
+Route::get('/temas', [DataController::class, 'getTemas']);
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::get('/ocorrencias', [OcorrenciaApiController::class, 'index']);
+    Route::get('/ocorrencias/{id}', [OcorrenciaApiController::class, 'show']);
+    Route::post('/ocorrencias', [OcorrenciaApiController::class, 'store']);
+
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+    // Route::get('/user', function (Request $request) {
+    //     return $request->user();
+    // });
+});
 
 Route::get('/images/{filename}', function ($filename) {
-    $path = storage_path('app/public/images/' . $filename);
+    $path = 'images/' . $filename;
 
-    if (!File::exists($path)) {
+    if (!Storage::disk('public')->exists($path)) {
         abort(404);
     }
 
-    $file = File::get($path);
-    $type = File::mimeType($path);
+    $fullPath = Storage::disk('public')->path($path);
 
-    $response = Response::make($file, 200);
-    $response->header("Content-Type", $type);
+    $type = File::mimeType($fullPath);
 
-    return $response;
+    $file = Storage::disk('public')->get($path);
+
+    return response($file, 200)
+        ->header('Content-Type', $type);
 })->where('filename', '.*');
