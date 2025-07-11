@@ -22,7 +22,11 @@ $response = Http::withOptions([
     'verify' => false, // Desativa verificação do certificado SSL
 ])->post("https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=" . env('PERSPECTIVE_API_KEY'), [
     "comment" => ["text" => $request->mensagem],
-    "requestedAttributes" => ["TOXICITY" => new \stdClass()],
+    "requestedAttributes" => ["TOXICITY" => new \stdClass(),
+        "INSULT" => new \stdClass(),
+        "PROFANITY" => new \stdClass(),
+        "THREAT" => new \stdClass(),],
+    
 ]);
 
         // Extrai o score de toxicidade
