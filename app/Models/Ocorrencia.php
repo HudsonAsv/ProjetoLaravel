@@ -9,9 +9,25 @@ use Illuminate\Database\Eloquent\Model;
 class Ocorrencia extends Model
 {
     protected $fillable = [
-        'titulo', 'descricao', 'localizacao', 'status',
-        'categoria_id', 'tema_id', 'imagem', 'data_solicitacao'
+        'titulo',
+        'descricao',
+        'status',
+        'categoria_id',
+        'tema_id',
+        'imagem',
+        'data_solicitacao',
+        'rua',
+        'numero',
+        'bairro',
+        'referencia',
+        'latitude',
+        'longitude',
+        'user_id'
     ];
+public function user()
+{
+    return $this->belongsTo(User::class);
+}
 
 public function categoria()
 {

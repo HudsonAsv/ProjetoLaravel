@@ -6,14 +6,18 @@
     <h2>Ocorrência {{ $ocorrencia->id }}</h2>
 
     <div>
-        <img src="{{ asset('storage/' . $ocorrencia->imagem) }}" alt="Imagem da Ocorrência" style="max-width: 300px;">
+        <img src="{{  Storage::url($ocorrencia->imagem) }}" alt="Imagem da Ocorrência" style="max-width: 300px;">
     </div>
 
     <p><strong>Descrição:</strong> {{ $ocorrencia->descricao }}</p>
-    <p><strong>Localização:</strong> {{ $ocorrencia->localizacao }}</p>
+    <p><strong>Localização:</strong> {{ $ocorrencia->rua }}, {{ $ocorrencia->numero ?? 'S/N' }} - {{ $ocorrencia->bairro }}</p>
+    @if($ocorrencia->referencia)
+        <p><strong>Referência:</strong> {{ $ocorrencia->referencia }}</p>
+    @endif
     <p><strong>Status:</strong> {{ $ocorrencia->status }}</p>
     <p><strong>Categoria:</strong> {{ $ocorrencia->categoria->nome ?? 'N/A' }}</p>
     <p><strong>Tema:</strong> {{ $ocorrencia->tema->nome ?? 'N/A' }}</p>
+    <p><strong>Nome do usuário:</strong> {{ $ocorrencia->user->name ?? 'N/A' }}</p>
 
     <h3>Histórico de Atualizações</h3>
     <ul>
@@ -26,7 +30,7 @@
     <ul>
         @forelse ($ocorrencia->comentarios as $comentario)
             <li>
-                <strong>{{ $comentario->autor }}:</strong> {{ $comentario->mensagem }}<br>
+               <strong>{{ $comentario->user->name ?? 'Anônimo' }}:</strong> {{ $comentario->conteudo }}<br>
                 <small>{{ $comentario->created_at->format('d/m/Y H:i') }}</small>
             </li>
         @empty
@@ -45,16 +49,12 @@
         </div>
     @endif
 
-    <form action="{{ route('comentario.store') }}" method="POST">
+    <form action="{{ route('comentario.store')}}" method="POST">
         @csrf
         <input type="hidden" name="ocorrencia_id" value="{{ $ocorrencia->id }}">
+        <label for="conteudo">Seu Comentário:</label><br>
+        <textarea id="conteudo" name="conteudo" rows="4" required>{{ old('conteudo') }}</textarea><br><br>
 
-        <label for="autor">Seu nome:</label><br>
-        <input type="text" id="autor" name="autor" value="{{ old('autor') }}" required><br><br>
-
-        <label for="mensagem">Comentário:</label><br>
-        <textarea id="mensagem" name="mensagem" rows="4" required>{{ old('mensagem') }}</textarea><br><br>
-
-        <button type="submit">Enviar</button>
+        <button type="submit">Enviar Comentário</button>
     </form>
 @endsection

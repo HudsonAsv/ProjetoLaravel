@@ -16,7 +16,8 @@ return new class extends Migration
         $table->foreignId('ocorrencia_id')->constrained()->onDelete('cascade');
         $table->text('mensagem')->nullable();
         $table->date('previsao_conclusao')->nullable();
-        $table->enum('status', ['concluido', 'em andamento', 'atrasado'])->default('em andamento');
+        $table->enum('status', ['recebido','concluido', 'em_andamento', 'atrasado'])->default('recebido');
+
         $table->timestamps();
     });
 }

@@ -166,7 +166,7 @@
                     backgroundColor: 'purple'
                 }]
             },
-            
+
          options: {
             indexAxis: 'y',
             maintainAspectRatio: true,
@@ -201,20 +201,21 @@
 
 <div class="galeria-grid">
     @foreach ($recentes as $ocorrencia)
-        <a href="{{ url('/ocorrencia/' . $ocorrencia->id) }}" style="text-decoration: none; color: inherit;">
-    <div class="galeria-card">
-        <div class="imagem-thumb">
-            <img src="{{ $ocorrencia->imagem }}" alt="Imagem da Ocorrência">
-        </div>
-        <h3>{{ $ocorrencia->titulo ?? 'Sem título' }}</h3>
+    <a href="{{ url('/ocorrencia/' . $ocorrencia->id) }}" style="text-decoration: none; color: inherit;">
+        <div class="galeria-card">
+            <div class="imagem-thumb">
+                <img src="{{  Storage::url($ocorrencia->imagem)  }}" alt="Imagem da Ocorrência">
+
+            </div>
+            <h3>{{ $ocorrencia->titulo ?? 'Sem título' }}</h3>
 
         <div class="tags">
             <span class="tag">{{ $ocorrencia->tema->nome ?? 'Tema' }}</span>
             <span class="tag">{{ $ocorrencia->categoria->nome ?? 'Categoria' }}</span>
         </div>
 
-        <p class="localizacao">📍 {{ $ocorrencia->localizacao }}</p>
-        <p class="status">Status: {{ ucfirst($ocorrencia->status) }}</p>
+            <p class="localizacao">📍 {{ $ocorrencia->rua }} {{ $ocorrencia->numero }}</p>
+            <p class="status">Status: {{ ucfirst($ocorrencia->status) }}</p>
 
         <div class="infos">
             <span class="data">📅 {{ \Carbon\Carbon::parse($ocorrencia->data_solicitacao)->format('d M Y') }}</span>

@@ -44,9 +44,10 @@
     <!-- Grid de Ocorrências -->
     <div class="galeria-grid">
         @forelse ($ocorrencias as $ocorrencia)
+        <a href="{{ url('/ocorrencia/' . $ocorrencia->id) }}" style="text-decoration: none; color: inherit;">
             <div class="galeria-card">
                 <div class="imagem-thumb">
-                    <img src="{{ asset($ocorrencia->imagem) }}" alt="Imagem da Ocorrência">
+                    <img src="{{ Storage::url($ocorrencia->imagem) }}" alt="Imagem da Ocorrência">
 
                 </div>
                 <h3>{{ $ocorrencia->titulo ?? 'Assunto' }}</h3>
@@ -56,7 +57,7 @@
                     <span class="tag">{{ $ocorrencia->categoria->nome ?? 'Categoria' }}</span>
                 </div>
 
-                <p class="localizacao">Localização: {{ $ocorrencia->localizacao }}</p>
+                <p class="localizacao">Localização: {{ $ocorrencia->rua }}, {{ $ocorrencia->bairro }}</p>
                 <p class="status">Status: {{ ucfirst($ocorrencia->status) }}</p>
 
                 <div class="infos">

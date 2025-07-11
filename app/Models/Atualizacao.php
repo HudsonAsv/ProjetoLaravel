@@ -13,5 +13,9 @@ class Atualizacao extends Model
     'status',
     'previsao_conclusao',
 ];
+    public function ocorrencia()
+    {
+        return $this->belongsTo(Ocorrencia::class);
+    }
 
 }
