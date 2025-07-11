@@ -17,9 +17,10 @@
         </div>
 
         <div class="nav-center">
-            <a href="{{ url('/') }}">Home</a>
-            <a href="{{ url('/galeria') }}">Galeria</a>
-            <a href="{{ url('/admin/editar/1') }}">Modificações</a>
+                <a href="{{ url('/') }}">Home</a>
+                <a href="{{ url('/galeria') }}">Galeria</a>
+                <a href="{{ url('/rejeitados') }}">Rejeitados</a>
+                <a href="{{ url('/analise') }}">Em Análise</a>
         </div>
 
         <div class="nav-right">
