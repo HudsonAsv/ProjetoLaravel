@@ -29,6 +29,10 @@ class RejeitadosController extends Controller
         $categorias = Categoria::all();
         $temas = Tema::all();
 
-        return view('rejeitados.index', compact('ocorrencias', 'categorias', 'temas'));
+        return view('rejeitados', [
+            'rejeitadas' => $ocorrencias,
+            'categorias' => $categorias,
+            'temas' => $temas,
+        ]);
     }
 }

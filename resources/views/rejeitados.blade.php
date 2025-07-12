@@ -1,53 +1,66 @@
 @extends('layouts.app')
 
-@section('title', 'Projetos Rejeitados')
+@section('title', 'Ocorrências Rejeitadas')
 
 @section('content')
-    <div style="text-align: center; margin-bottom: 20px;">
-        <h2>Projetos Rejeitados</h2>
+
+<h2>Ocorrências Rejeitadas</h2>
+
+<form method="GET" action="{{ url('/rejeitados') }}" style="display: flex; gap: 10px; margin-bottom: 20px;">
+    <div>
+        <label>Temas</label>
+        <select name="tema_id" class="filtro-select">
+            <option value="">Todos</option>
+            @foreach ($temas as $tema)
+                <option value="{{ $tema->id }}" {{ request('tema_id') == $tema->id ? 'selected' : '' }}>{{ $tema->nome }}</option>
+            @endforeach
+        </select>
     </div>
 
-    <div style="display: flex; justify-content: center; gap: 40px; margin-bottom: 20px;">
-        <div>
-            <label><strong>Temas</strong></label><br>
-            <select style="background-color: #ffbaba; padding: 6px 12px; border-radius: 10px;">
-                <option>Todos</option>
-                <!-- Outras opções de tema -->
-            </select>
-        </div>
-
-        <div>
-            <label><strong>Categoria</strong></label><br>
-            <select style="background-color: #ffbaba; padding: 6px 12px; border-radius: 10px;">
-                <option>Solicitação</option>
-                <!-- Outras opções de categoria -->
-            </select>
-        </div>
-
-        <div>
-            <label><strong>Rejeição por:</strong></label><br>
-            <select style="background-color: #ffbaba; padding: 6px 12px; border-radius: 10px;">
-                <option>Descrição</option>
-                <!-- Outras opções de motivos -->
-            </select>
-        </div>
+    <div>
+        <label>Categoria</label>
+        <select name="categoria_id" class="filtro-select">
+            <option value="">Todas</option>
+            @foreach ($categorias as $categoria)
+                <option value="{{ $categoria->id }}" {{ request('categoria_id') == $categoria->id ? 'selected' : '' }}>{{ $categoria->nome }}</option>
+            @endforeach
+        </select>
     </div>
 
-    @for ($i = 1; $i <= 2; $i++)
-        <div style="max-width: 600px; margin: 0 auto 30px; background-color: white; border-radius: 10px; overflow: hidden;">
-            <div style="text-align: center;">
-                <img src="{{ asset('images/sensitive-content.png') }}" alt="Imagem sensível" style="width: 100%;">
+    <div>
+        <label>Rejeição por:</label>
+        <select name="motivo" class="filtro-select">
+            <option value="">Descrição</option>
+            <option value="imagem" {{ request('motivo') == 'imagem' ? 'selected' : '' }}>Imagem</option>
+            <option value="conteúdo" {{ request('motivo') == 'conteúdo' ? 'selected' : '' }}>Conteúdo</option>
+        </select>
+    </div>
+
+    <button type="submit" class="filtro-btn">Filtrar</button>
+</form>
+
+<div class="galeria-grid">
+    @forelse ($rejeitadas as $ocorrencia)
+        <div class="galeria-card">
+            <div class="imagem-thumb">
+                <img src="{{ asset('images/sensitive-content.jpg') }}" alt="Conteúdo sensível" />
             </div>
 
-            <div style="padding: 10px;">
-                <h3>Titulo {{ $i }}</h3>
-                <span class="tag">Educação</span>
-                <span class="tag">Solicitação</span>
-                <div style="display: flex; justify-content: space-between; margin-top: 10px;">
-                    <span>📅 Fev, 04 2025</span>
-                    <span>👁 94</span>
-                </div>
+            <h3>{{ $ocorrencia->titulo }}</h3>
+
+            <div class="tags">
+                <span class="tag">{{ $ocorrencia->categoria->nome ?? 'Categoria' }}</span>
+                <span class="tag">{{ $ocorrencia->tema->nome ?? 'Tema' }}</span>
+            </div>
+
+            <div class="infos">
+                <span class="data">📅 {{ \Carbon\Carbon::parse($ocorrencia->data_solicitacao)->format('M, d Y') }}</span>
+                <span class="like">👁 {{ $ocorrencia->visualizacoes ?? 0 }}</span>
             </div>
         </div>
-    @endfor
+    @empty
+        <p>Nenhuma ocorrência rejeitada encontrada.</p>
+    @endforelse
+</div>
+
 @endsection

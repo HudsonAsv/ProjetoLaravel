@@ -9,16 +9,16 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::create('comentarios', function (Blueprint $table) {
-            $table->id();
-            $table->text('conteudo');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+   public function up()
+{
+    // Schema::create('comentarios', function (Blueprint $table) {
+    //     $table->id();
+    //     $table->text('conteudo');
+    //     $table->foreignId('user_id')->constrained()->onDelete('cascade');
+    //     $table->foreignId('ocorrencia_id')->constrained()->onDelete('cascade');
+    //     $table->timestamps();
+    // });
 
-            $table->foreignId('ocorrencia_id')->constrained()->onDelete('cascade');
-            $table->timestamps();
-        });
     }
 
     /**
