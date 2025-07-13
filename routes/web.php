@@ -8,7 +8,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ComentarioController;
 use App\Http\Controllers\RejeitadosController; // <-- Adicionado
 use App\Http\Controllers\AnaliseController;
-
+use App\Http\Controllers\PerfilController;
 use Illuminate\Support\Facades\Auth;
 
 // ROTAS PROTEGIDAS
@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
     // nova rota: página Rejeitados
     Route::get('/rejeitados', [RejeitadosController::class, 'index']);
     Route::get('/analise', [AnaliseController::class, 'index'])->name('analise');
+        Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil');
 
 });
 

@@ -12,7 +12,10 @@
 
     <header>
         <div class="nav-left">
-            <img src="{{ asset('images/avatar-placeholder.png') }}" width="45" height="45" style="border-radius: 50%;">
+            <a href="{{ url('/perfil') }}">
+    <img src="{{ asset('images/avatar-placeholder.png') }}" width="45" height="45" style="border-radius: 50%;">
+</a>
+
             
         </div>
 
