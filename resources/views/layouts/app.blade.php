@@ -10,33 +10,35 @@
 </head>
 <body>
 
-    <header>
-        <div class="nav-left">
-            <a href="{{ url('/perfil') }}">
-    <img src="{{ asset('images/avatar-placeholder.png') }}" width="45" height="45" style="border-radius: 50%;">
-</a>
+<header style="display: flex; justify-content: space-between; align-items: center; padding: 8px 20px; background-color: #701a1a; border-radius: 0 0 10px 10px;">
 
-            
-        </div>
+    <!-- Avatar -->
+    <div class="nav-left">
+        <img src="{{ asset('images/avatar-placeholder.png') }}" width="45" height="45" style="border-radius: 50%;">
+    </div>
 
-        <div class="nav-center">
-                <a href="{{ url('/') }}">Home</a>
-                <a href="{{ url('/galeria') }}">Galeria</a>
-                <a href="{{ url('/rejeitados') }}">Rejeitados</a>
-                <a href="{{ url('/analise') }}">Em Análise</a>
-        </div>
+    <!-- Navegação Central -->
+    <div  class="nav-center"style="display: flex; gap: 20px;">
+        <a href="{{ url('/') }}" class="nav-btn">Home</a>
+        <a href="{{ url('/galeria') }}" class="nav-btn">Galeria</a>
+        <a href="{{ url('/rejeitados') }}" class="nav-btn">Rejeitados</a>
+        <a href="{{ url('/analise') }}" class="nav-btn">Em Análise</a>
 
-        <div class="nav-right">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="font-weight: bold; font-size: 18px;">VOZ<br>POPULAR</span>
-                <img src="{{ asset('images/logo-prefeitura.png') }}" alt="Logo" height="50">
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" style="background:none; border:none; color:red;">Sair</button>
-                </form>
-            </div>
-        </div>
-    </header>
+        <!-- Botão Logout com ícone -->
+        <form method="POST" action="{{ route('logout') }}" style="margin: 0; padding-left: 10px;">
+            @csrf
+            <button type="submit" style="background-color: #ff6b6b; border: none; border-radius: 6px; padding: 6px; cursor: pointer;">
+                <img src="{{ asset('images/sair.png') }}" alt="Sair" style="width: 20px; height: 20px;">
+            </button>
+        </form>
+    </div>
+
+    <!-- Logo e título -->
+    <div class="nav-left"style="display: flex; align-items: center; gap: 10px;">
+        <span style="font-weight: bold; font-size: 18px;">VOZ<br>POPULAR</span>
+        <img src="{{ asset('images/logo-prefeitura.png') }}" alt="Logo" height="50">
+    </div>
+</header>
 
     <main>
         @yield('content')
