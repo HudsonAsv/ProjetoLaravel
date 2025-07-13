@@ -24,7 +24,9 @@ Route::middleware('auth')->group(function () {
     // novos dados
     Route::get('/ocorrencia/criar', [GaleriaController::class, 'create']);
     Route::post('/ocorrencia/salvar', [GaleriaController::class, 'store']);
-    Route::post('/comentarios', [ComentarioController::class, 'store'])->name('comentario.store');
+    //Route::post('/comentarios', [ComentarioController::class, 'store'])->name('comentario.store');
+    Route::post('/comentario/{ocorrencia}', [ComentarioController::class, 'store'])->middleware('auth')->name('comentario.store');
+
 
     // nova rota: página Rejeitados
     Route::get('/rejeitados', [RejeitadosController::class, 'index']);

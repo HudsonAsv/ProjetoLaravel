@@ -3,44 +3,43 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Comentario;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Comentario;
 
 class ComentarioController extends Controller
 {
-    public function store(Request $request)
+    public function store(Request $request, $ocorrenciaId)
     {
         $request->validate([
-            'ocorrencia_id' => 'required|exists:ocorrencias,id',
-            'autor' => 'required|string|max:100',
-            'mensagem' => 'required|string|max:1000',
+            'conteudo' => 'required|string|max:1000',
         ]);
 
         // Chamada à Perspective API
-        
-$response = Http::withOptions([
-    'verify' => false, // Desativa verificação do certificado SSL
-])->post("https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=" . env('PERSPECTIVE_API_KEY'), [
-    "comment" => ["text" => $request->mensagem],
-    "requestedAttributes" => ["TOXICITY" => new \stdClass(),
-        "INSULT" => new \stdClass(),
-        "PROFANITY" => new \stdClass(),
-        "THREAT" => new \stdClass(),],
-    
-]);
+        $response = Http::withOptions([
+            'verify' => false,
+        ])->post("https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=" . env('PERSPECTIVE_API_KEY'), [
+            "comment" => ["text" => $request->conteudo],
+            "requestedAttributes" => [
+                "TOXICITY" => new \stdClass(),
+                "INSULT" => new \stdClass(),
+                "PROFANITY" => new \stdClass(),
+                "THREAT" => new \stdClass(),
+            ],
+        ]);
 
-        // Extrai o score de toxicidade
+        // Verificação de toxicidade
         $score = $response['attributeScores']['TOXICITY']['summaryScore']['value'] ?? 0;
 
-        // Bloqueia se score for alto
         if ($score >= 0.7) {
-            return back()->withErrors(['mensagem' => 'Comentário considerado ofensivo e foi bloqueado.']);
+            return back()->withErrors(['conteudo' => 'Comentário considerado ofensivo e foi bloqueado.']);
         }
 
+        // Criação do comentário
         Comentario::create([
-            'ocorrencia_id' => $request->ocorrencia_id,
-            'autor' => $request->autor,
-            'mensagem' => $request->mensagem,
+            'ocorrencia_id' => $ocorrenciaId,
+            'user_id' => Auth::id(),
+            'conteudo' => $request->conteudo,
         ]);
 
         return redirect()->back()->with('success', 'Comentário enviado com sucesso!');
