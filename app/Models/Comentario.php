@@ -16,6 +16,10 @@ public function user()
 {
     return $this->belongsTo(User::class);
 }
+public function comentarios()
+{
+    return $this->hasMany(Comentario::class);
+}
 
 
 }

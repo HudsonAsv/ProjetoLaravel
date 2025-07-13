@@ -55,11 +55,7 @@
     <button class="btn-tag">{{ $ocorrencia->tema->nome }}</button>
 </div>
 
-<div style="margin-top: 20px;">
-    <p>📍 <strong>Localização:</strong> {{ $ocorrencia->localizacao }}</p>
-    <p>📝 <strong>Descrição:</strong> {{ $ocorrencia->descricao }}</p>
-    <p>📅 <strong>Data da solicitação:</strong> {{ \Carbon\Carbon::parse($ocorrencia->data_solicitacao)->format('d/m/Y') }}</p>
-</div>
+
 
 <!-- Formulário de edição de status (se quiser deixar visível direto) -->
 @if(Auth::check() && Auth::user()->role === 'admin')
@@ -78,8 +74,19 @@
 @endif
 
 <div style="margin-top: 40px;">
-    <span>👍 {{ $ocorrencia->likes ?? 94 }}</span>
-    <span style="margin-left: 30px;">🔗 compartilhar</span>
+    <p><strong>Status:</strong> {{ $ocorrencia->status }}</p>
+@if($ocorrencia->comentarios->isEmpty())
+    <p>Sem comentários ainda.</p>
+@else
+    <h3>Comentários</h3>
+    @foreach($ocorrencia->comentarios as $comentario)
+        <div>
+            <strong>{{ $comentario->user->name ?? 'Anônimo' }}</strong> disse:
+            <p>{{ $comentario->conteudo }}</p>
+        </div>
+    @endforeach
+@endif
+
 </div>
 
 @endsection

@@ -13,7 +13,8 @@ class GaleriaController extends Controller
 {
     public function show($id)
 {
-    $ocorrencia = \App\Models\Ocorrencia::with('categoria', 'tema', 'comentarios')->findOrFail($id);
+    $ocorrencia = Ocorrencia::with(['categoria', 'tema', 'comentarios.user'])->findOrFail($id);
+
     return view('detalhes', compact('ocorrencia'));
 }
 
