@@ -84,7 +84,12 @@ class GaleriaController extends Controller
         'data_solicitacao' => now(),
     ]);
 
-    return redirect('/galeria')->with('success', 'Ocorrência cadastrada com sucesso!');
+    if ($request->status === 'rejeitado') {
+    return redirect('/rejeitados')->with('success', 'Ocorrência recusada está no campo de rejeitados.');
+}
+
+return redirect('/galeria')->with('success', 'Ocorrência cadastrada com sucesso!');
+
 }
 
 }
