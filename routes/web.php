@@ -7,6 +7,7 @@ use App\Http\Controllers\GaleriaController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ComentarioController;
 use App\Http\Controllers\RejeitadosController; // <-- Adicionado
+use App\Http\Controllers\AnaliseController;
 
 use Illuminate\Support\Facades\Auth;
 
@@ -25,6 +26,8 @@ Route::middleware('auth')->group(function () {
 
     // nova rota: página Rejeitados
     Route::get('/rejeitados', [RejeitadosController::class, 'index']);
+    Route::get('/analise', [AnaliseController::class, 'index'])->name('analise');
+
 });
 
 // ROTAS PÚBLICAS
