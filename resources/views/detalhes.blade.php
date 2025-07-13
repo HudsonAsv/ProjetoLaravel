@@ -43,11 +43,23 @@
     <img src="{{ asset('storage/' . $ocorrencia->imagem) }}" alt="Imagem da Ocorrência" style="max-width: 100%; margin-bottom: 20px;">
 
     <!-- Botão flutuante para editar -->
-    <form method="POST" action="{{ url('/admin/atualizar/' . $ocorrencia->id) }}" class="btn-editar">
-        @csrf
-        <input type="hidden" name="status" value="editar">
-        <button title="Editar Status">🖉</button>
-    </form>
+    <form method="POST" action="{{ url('/admin/atualizar/' . $ocorrencia->id) }}">
+    @csrf
+    {{-- se o método da rota for PUT/PATCH --}}
+    @method('POST')
+
+    <select name="status" required>
+        <option value="">Selecione o status</option>
+        <option value="recebido">Recebido</option>
+        <option value="em_analise">Em Análise</option>
+        <option value="em_andamento">Em Andamento</option>
+        <option value="concluido">Concluído</option>
+        <option value="atrasado">Atrasado</option>
+    </select>
+
+    <button type="submit">Atualizar Status</button>
+</form>
+
 </div>
 
 <div style="display: flex; justify-content: center; flex-wrap: wrap;">
