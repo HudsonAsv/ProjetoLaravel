@@ -1,60 +1,85 @@
 @extends('layouts.app')
 
-@section('title', 'Ocorrência ' . $ocorrencia->id)
+@section('title', $ocorrencia->titulo)
 
 @section('content')
-    <h2>Ocorrência {{ $ocorrencia->id }}</h2>
 
-    <div>
-        <img src="{{  Storage::url($ocorrencia->imagem) }}" alt="Imagem da Ocorrência" style="max-width: 300px;">
-    </div>
+<style>
+    .btn-tag {
+        padding: 10px 20px;
+        border-radius: 20px;
+        background-color: #ececec;
+        margin: 5px;
+        border: none;
+    }
 
-    <p><strong>Descrição:</strong> {{ $ocorrencia->descricao }}</p>
-    <p><strong>Localização:</strong> {{ $ocorrencia->rua }}, {{ $ocorrencia->numero ?? 'S/N' }} - {{ $ocorrencia->bairro }}</p>
-    @if($ocorrencia->referencia)
-        <p><strong>Referência:</strong> {{ $ocorrencia->referencia }}</p>
-    @endif
-    <p><strong>Status:</strong> {{ $ocorrencia->status }}</p>
-    <p><strong>Categoria:</strong> {{ $ocorrencia->categoria->nome ?? 'N/A' }}</p>
-    <p><strong>Tema:</strong> {{ $ocorrencia->tema->nome ?? 'N/A' }}</p>
-    <p><strong>Nome do usuário:</strong> {{ $ocorrencia->user->name ?? 'N/A' }}</p>
+    .btn-editar {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+    }
 
-    <h3>Histórico de Atualizações</h3>
-    <ul>
-        @foreach($ocorrencia->atualizacaos as $atualizacao)
-            <li>{{ $atualizacao->mensagem }} - <em>{{ $atualizacao->created_at->format('d/m/Y H:i') }}</em></li>
-        @endforeach
-    </ul>
+    .status-form {
+        margin-top: 20px;
+    }
 
-    <h3>Comentários</h3>
-    <ul>
-        @forelse ($ocorrencia->comentarios as $comentario)
-            <li>
-               <strong>{{ $comentario->user->name ?? 'Anônimo' }}:</strong> {{ $comentario->conteudo }}<br>
-                <small>{{ $comentario->created_at->format('d/m/Y H:i') }}</small>
-            </li>
-        @empty
-            <li>Nenhum comentário ainda.</li>
-        @endforelse
-    </ul>
+    .status-form select {
+        padding: 5px 10px;
+    }
 
-    <h4>Adicionar Comentário</h4>
-    @if ($errors->any())
-        <div style="color: red;">
-            <ul>
-                @foreach ($errors->all() as $erro)
-                    <li>{{ $erro }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+    .status-form button {
+        padding: 5px 12px;
+        margin-left: 10px;
+    }
+</style>
 
-    <form action="{{ route('comentario.store')}}" method="POST">
+<h2 style="text-align: center; margin-bottom: 10px;">{{ $ocorrencia->titulo }}</h2>
+
+<div style="position: relative;">
+    <img src="{{ asset('storage/' . $ocorrencia->imagem) }}" alt="Imagem da Ocorrência" style="max-width: 100%; margin-bottom: 20px;">
+
+    <!-- Botão flutuante para editar -->
+    <form method="POST" action="{{ url('/admin/atualizar/' . $ocorrencia->id) }}" class="btn-editar">
         @csrf
-        <input type="hidden" name="ocorrencia_id" value="{{ $ocorrencia->id }}">
-        <label for="conteudo">Seu Comentário:</label><br>
-        <textarea id="conteudo" name="conteudo" rows="4" required>{{ old('conteudo') }}</textarea><br><br>
-
-        <button type="submit">Enviar Comentário</button>
+        <input type="hidden" name="status" value="editar">
+        <button title="Editar Status">🖉</button>
     </form>
+</div>
+
+<div style="display: flex; justify-content: center; flex-wrap: wrap;">
+    <button class="btn-tag">{{ $ocorrencia->categoria->nome }}</button>
+    <button class="btn-tag">{{ $ocorrencia->tema->nome }}</button>
+</div>
+
+<div style="margin-top: 20px;">
+    <p>📍 <strong>Localização:</strong> {{ $ocorrencia->localizacao }}</p>
+    <p>📝 <strong>Descrição:</strong> {{ $ocorrencia->descricao }}</p>
+    <p>📅 <strong>Data da solicitação:</strong> {{ \Carbon\Carbon::parse($ocorrencia->data_solicitacao)->format('d/m/Y') }}</p>
+</div>
+
+<!-- Formulário de edição de status (se quiser deixar visível direto) -->
+@if(Auth::check() && Auth::user()->role === 'admin')
+    <form method="POST" action="{{ url('/admin/atualizar/' . $ocorrencia->id) }}" class="status-form">
+        @csrf
+        <label for="status"><strong>Mudar status:</strong></label>
+        <select name="status" id="status">
+            <option value="analise" {{ $ocorrencia->status == 'analise' ? 'selected' : '' }}>Em Análise</option>
+            <option value="rejeitado" {{ $ocorrencia->status == 'rejeitado' ? 'selected' : '' }}>Rejeitado</option>
+            <option value="concluido" {{ $ocorrencia->status == 'concluido' ? 'selected' : '' }}>Concluído</option>
+            <option value="em andamento" {{ $ocorrencia->status == 'em andamento' ? 'selected' : '' }}>Em Andamento</option>
+            <option value="atrasado" {{ $ocorrencia->status == 'atrasado' ? 'selected' : '' }}>Atrasado</option>
+        </select>
+        <button type="submit">Atualizar</button>
+    </form>
+@endif
+
+<div style="margin-top: 40px;">
+    <span>👍 {{ $ocorrencia->likes ?? 94 }}</span>
+    <span style="margin-left: 30px;">🔗 compartilhar</span>
+</div>
+
 @endsection
