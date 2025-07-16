@@ -90,8 +90,8 @@
         </div>
 
         <a href="{{ url('/analise') }}" class="nav-btn">Em Análise</a>
-        <a href="{{ url('/galeria') }}" class="nav-btn">Aguardando Aprovação</a>
-        <a href="{{ url('/galeria') }}" class="nav-btn">Em Andamento</a>
+        <a href="{{ url('/aguardando') }}" class="nav-btn">Aguardando Aprovação</a>
+        <a href="{{ url('/andamento') }}" class="nav-btn">Em Andamento</a>
         <!-- Botão Logout -->
         <form method="POST" action="{{ route('logout') }}" style="margin: 0; padding-left: 10px;">
             @csrf

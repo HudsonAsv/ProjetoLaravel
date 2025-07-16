@@ -12,6 +12,9 @@ use App\Http\Controllers\PerfilController;
 use Illuminate\Support\Facades\Auth;
 
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\AguardandoController;
+use App\Http\Controllers\AndamentoController;
+
 
 // ROTAS PROTEGIDAS
 Route::middleware('auth')->group(function () {
@@ -36,6 +39,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil');
     Route::get('/perfil/editar', [UsuarioController::class, 'edit'])->name('perfil.edit');
     Route::post('/perfil', [UsuarioController::class, 'update'])->name('perfil.update');
+
+Route::get('/aguardando', [AguardandoController::class, 'index']);
+Route::get('/aguardando/{id}', [AguardandoController::class, 'show']);
+Route::get('/andamento', [\App\Http\Controllers\AndamentoController::class, 'index']);
+Route::get('/andamento/{id}', [\App\Http\Controllers\AndamentoController::class, 'show']);
 
 });
 
