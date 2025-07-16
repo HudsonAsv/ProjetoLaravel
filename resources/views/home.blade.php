@@ -13,6 +13,7 @@
     <form method="GET" action="{{ url('/') }}" style="margin-bottom: 20px;">
         <label>Mês:</label>
         <select name="mes">
+            <option value="">Todos</option>
             @foreach(range(1, 12) as $m)
                 <option value="{{ $m }}" {{ request('mes') == $m ? 'selected' : '' }}>
     {{ ucfirst(\Carbon\Carbon::createFromDate(null, $m, 1)->locale('pt_BR')->isoFormat('MMMM')) }}

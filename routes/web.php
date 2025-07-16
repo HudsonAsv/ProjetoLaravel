@@ -44,8 +44,8 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/aguardando', [AguardandoController::class, 'index']);
 Route::get('/aguardando/{id}', [AguardandoController::class, 'show']);
-Route::get('/andamento', [\App\Http\Controllers\AndamentoController::class, 'index']);
-Route::get('/andamento/{id}', [\App\Http\Controllers\AndamentoController::class, 'show']);
+Route::get('/andamento', [AndamentoController::class, 'index']);
+Route::get('/andamento/{id}', [AndamentoController::class, 'show']);
 Route::get('/suspensos', [SuspensosController::class, 'index']);
 });
 

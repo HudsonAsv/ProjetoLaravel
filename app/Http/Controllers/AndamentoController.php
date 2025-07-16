@@ -20,6 +20,6 @@ class AndamentoController extends Controller
     public function show($id)
     {
         $ocorrencia = Ocorrencia::with(['categoria', 'tema', 'user', 'comentarios'])->findOrFail($id);
-        return view('andamento.detalhes', compact('ocorrencia'));
+        return view('detalhes', compact('ocorrencia'));
     }
 }
