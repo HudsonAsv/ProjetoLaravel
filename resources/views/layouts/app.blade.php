@@ -78,7 +78,6 @@
     <!-- Navegação Central -->
     <div class="nav-center" style="display: flex; gap: 10px; align-items: center;">
         <a href="{{ url('/') }}" class="nav-btn">Home</a>
-        <a href="{{ url('/galeria') }}" class="nav-btn">Galeria</a>
 
         <!-- Botão suspenso -->
         <div class="dropdown">
@@ -91,7 +90,8 @@
         </div>
 
         <a href="{{ url('/analise') }}" class="nav-btn">Em Análise</a>
-
+        <a href="{{ url('/galeria') }}" class="nav-btn">Aguardando Aprovação</a>
+        <a href="{{ url('/galeria') }}" class="nav-btn">Em Andamento</a>
         <!-- Botão Logout -->
         <form method="POST" action="{{ route('logout') }}" style="margin: 0; padding-left: 10px;">
             @csrf
