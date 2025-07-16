@@ -15,6 +15,8 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\AguardandoController;
 use App\Http\Controllers\AndamentoController;
 
+use App\Http\Controllers\SuspensosController;
+
 
 // ROTAS PROTEGIDAS
 Route::middleware('auth')->group(function () {
@@ -44,7 +46,7 @@ Route::get('/aguardando', [AguardandoController::class, 'index']);
 Route::get('/aguardando/{id}', [AguardandoController::class, 'show']);
 Route::get('/andamento', [\App\Http\Controllers\AndamentoController::class, 'index']);
 Route::get('/andamento/{id}', [\App\Http\Controllers\AndamentoController::class, 'show']);
-
+Route::get('/suspensos', [SuspensosController::class, 'index']);
 });
 
 // ROTAS PÚBLICAS
