@@ -2,23 +2,21 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Comentario extends Model
 {
+    use HasFactory;
     protected $fillable = ['ocorrencia_id', 'user_id', 'conteudo'];
 
-public function ocorrencia()
-{
-    return $this->belongsTo(Ocorrencia::class);
-}
 public function user()
 {
     return $this->belongsTo(User::class);
 }
-public function comentarios()
+public function ocorrencia()
 {
-    return $this->hasMany(Comentario::class);
+    return $this->belongsTo(Ocorrencia::class);
 }
 
 

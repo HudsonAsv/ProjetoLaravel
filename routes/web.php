@@ -31,10 +31,10 @@ Route::middleware('auth')->group(function () {
     // nova rota: página Rejeitados
     Route::get('/rejeitados', [RejeitadosController::class, 'index']);
     Route::get('/analise', [AnaliseController::class, 'index'])->name('analise');
-        
-    
+
+
     Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil');
-        Route::get('/perfil', [UsuarioController::class, 'edit'])->name('perfil.edit');
+    Route::get('/perfil/editar', [UsuarioController::class, 'edit'])->name('perfil.edit');
     Route::post('/perfil', [UsuarioController::class, 'update'])->name('perfil.update');
 
 });

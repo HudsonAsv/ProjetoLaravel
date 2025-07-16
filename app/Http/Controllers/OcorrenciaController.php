@@ -11,16 +11,16 @@ class OcorrenciaController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Ocorrencia::query();
+        $publicStatuses = ['recebido', 'concluido', 'em_andamento', 'atrasado'];
+
+        $query = Ocorrencia::whereIn('status', $publicStatuses);
 
         if ($request->filled('mes')) {
             $query->whereMonth('data_solicitacao', $request->mes);
         }
-
         if ($request->filled('categoria_id')) {
             $query->where('categoria_id', $request->categoria_id);
         }
-
         if ($request->filled('tema_id')) {
             $query->where('tema_id', $request->tema_id);
         }
@@ -44,11 +44,11 @@ class OcorrenciaController extends Controller
 
         $categorias = Categoria::all();
         $temas = Tema::all();
-
-$recentes = Ocorrencia::with(['categoria', 'tema'])
-    ->orderBy('data_solicitacao', 'desc')
-    ->take(6)
-    ->get();
+        $recentes = Ocorrencia::with(['categoria', 'tema'])
+        ->whereIn('status', $publicStatuses)
+        ->orderBy('data_solicitacao', 'desc')
+        ->take(6)
+        ->get();
 
 
         return view('home', compact(
@@ -58,7 +58,7 @@ $recentes = Ocorrencia::with(['categoria', 'tema'])
     'ocorrencias',
     'categorias',
     'temas',
-    'recentes' // novo
+    'recentes'
     ));
     }
 }

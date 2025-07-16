@@ -14,7 +14,8 @@ class UserSeeder extends Seeder
             ['email' => 'admin@vozpopular.com'], // condição
             [
                 'name' => 'Admin',
-                'password' => Hash::make('1')
+                'password' => Hash::make('1'),
+                'role' => 'admin'
             ]
         );
 

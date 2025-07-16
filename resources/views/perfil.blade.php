@@ -11,5 +11,8 @@
         <p><strong>Bio:</strong> {{ $user->bio ?? 'Nenhuma bio cadastrada' }}</p>
         <p><strong>Tipo de Conta:</strong> {{ ucfirst($user->role ?? 'padrão') }}</p>
         <p><strong>Setor:</strong> {{ $user->setor ?? 'Não especificado' }}</p>
+
+        <a href="{{ route('perfil.edit') }}">
+        <button>Editar Perfil</button></a>
     </div>
 @endsection

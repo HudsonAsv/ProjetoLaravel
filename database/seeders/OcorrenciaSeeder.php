@@ -42,7 +42,7 @@ class OcorrenciaSeeder extends Seeder
             Tema::updateOrCreate(['nome' => $nome], []);
         }
 
-        foreach (range(1, 25) as $i) {
+        foreach (range(1, 100) as $i) {
             $tema = Tema::inRandomOrder()->first();
             $dataSolicitacao = now()->subDays(rand(0, 60));
             $tituloGerado = "Ocorrência - " . $tema->nome . " - " . $dataSolicitacao->format('d/m/Y');

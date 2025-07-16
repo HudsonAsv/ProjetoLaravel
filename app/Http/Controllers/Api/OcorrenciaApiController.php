@@ -82,23 +82,31 @@ class OcorrenciaApiController extends Controller
             'tema_id' => 'required|exists:temas,id',
             'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+        $rejectionReason = null;
 
-        if ($request->hasFile('imagem')) {
+        $perspectiveKey = env('PERSPECTIVE_API_KEY');
+        if ($perspectiveKey) {
+            $textResponse = Http::post("https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=$perspectiveKey", [
+                'comment' => ['text' => $data['descricao']],
+                'languages' => ['pt'],
+                'requestedAttributes' => ['TOXICITY' => new \stdClass()],
+            ]);
+            $toxicity = $textResponse->json('attributeScores.TOXICITY.summaryScore.value');
+            if ($toxicity >= 0.8) {
+                $rejectionReason = 'Conteúdo textual inadequado.';
+            }
+        }
+        if ($rejectionReason === null && $request->hasFile('imagem')) {
             $user = env('SIGHTENGINE_USER');
             $secret = env('SIGHTENGINE_SECRET');
 
-        if ($user && $secret) {
-            $tempPath = $request->file('imagem')->store('temp', 'public');
-            $tempUrl = Storage::url($tempPath);
-
-            $imageCheck = Http::get('https://api.sightengine.com/1.0/check.json', [
-                'url' => $tempUrl,
-                'models' => 'nudity,wad,offensive',
-                'api_user' => $user,
-                'api_secret' => $secret,
+            if ($user && $secret) {
+            $imageCheck = Http::asMultipart()->post('https://api.sightengine.com/1.0/check.json', [
+                    ['name' => 'media', 'contents' => fopen($request->file('imagem')->getPathname(), 'r')],
+                    ['name' => 'models', 'contents' => 'nudity,wad,offensive'],
+                    ['name' => 'api_user', 'contents' => $user],
+                    ['name' => 'api_secret', 'contents' => $secret],
             ]);
-
-            Storage::disk('public')->delete($tempPath);
 
             if ($imageCheck->successful()) {
                 $nudityScore = $imageCheck->json('nudity.raw');
@@ -106,13 +114,13 @@ class OcorrenciaApiController extends Controller
                 $offensiveScore = $imageCheck->json('offensive.prob');
 
             if ($nudityScore > 0.7 || $weaponScore > 0.5 || $offensiveScore > 0.7) {
-                return response()->json(['message' => 'A imagem contém conteúdo impróprio.'], 422);
-            }} else {
-                    return response()->json(['message' => 'Não foi possível verificar a imagem. Tente novamente.'], 500);
-                    //Log::error('Falha na verificação da Sightengine: ' . $imageCheck->body());
+                $rejectionReason = 'A imagem contém conteúdo impróprio.';
                 }
             }
+        }
+             if ($request->hasFile('imagem')) {
             $data['imagem'] = $request->file('imagem')->store('ocorrencias', 'public');
+            }
         }
         // 🔍 Verificação de toxicidade com Perspective API
         /*$perspectiveKey = env('PERSPECTIVE_API_KEY');
@@ -158,6 +166,12 @@ class OcorrenciaApiController extends Controller
         $data['data_solicitacao'] = $dataSolicitacao;
         $data['user_id'] = Auth::id();
 
+        if ($rejectionReason !== null) {
+            $data['status'] = 'rejeitado';
+            $data['motivo_rejeicao'] = $rejectionReason;
+            Ocorrencia::create($data);
+            return response()->json(['message' => $rejectionReason], 422);
+        }
         $ocorrencia = Ocorrencia::create($data);
         return response()->json(['message' => 'Ocorrência salva com sucesso!', 'ocorrencia' => $ocorrencia], 201);
     }

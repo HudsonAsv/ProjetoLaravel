@@ -22,7 +22,8 @@ class Ocorrencia extends Model
         'referencia',
         'latitude',
         'longitude',
-        'user_id'
+        'user_id',
+        'motivo_rejeicao'
     ];
 public function user()
 {

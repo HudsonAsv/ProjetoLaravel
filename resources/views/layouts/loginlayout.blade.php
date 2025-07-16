@@ -39,7 +39,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 80vh;
+            min-height: 87vh;
         }
 
         .login-container h2 {
@@ -52,16 +52,18 @@
         .login-container form {
             border: 2px dashed #650000;
             padding: 30px;
-            border-radius: 30px;
+            border-radius: 90px;
             width: 100%;
             max-width: 400px;
+            height: 410px;
+            text-align: center;
         }
 
         .login-container input[type="email"],
         .login-container input[type="password"] {
-            width: 100%;
+            width: 80%;
             padding: 10px;
-            margin: 10px 0;
+            margin: 8px 0;
             border: 2px solid #650000;
             border-radius: 8px;
             font-weight: bold;
@@ -81,11 +83,17 @@
             border-radius: 10px;
             font-weight: bold;
             cursor: pointer;
-            width: 100%;
+            width: 50%;
         }
 
         .login-container button:hover {
             background-color: #c9302c;
+        }
+        @media (max-width: 800px) {
+        .login-container form {
+            width: 90%;
+            height: auto;
+            padding: 25px;
         }
     </style>
 </head>

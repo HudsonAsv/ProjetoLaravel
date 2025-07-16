@@ -14,7 +14,9 @@
 
     <!-- Avatar -->
     <div class="nav-left">
+        <a href="{{ route('perfil') }}">
         <img src="{{ asset('images/avatar-placeholder.png') }}" width="45" height="45" style="border-radius: 50%;">
+        </a>
     </div>
 
     <!-- Navegação Central -->

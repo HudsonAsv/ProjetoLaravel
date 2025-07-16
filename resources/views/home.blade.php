@@ -15,7 +15,7 @@
         <select name="mes">
             @foreach(range(1, 12) as $m)
                 <option value="{{ $m }}" {{ request('mes') == $m ? 'selected' : '' }}>
-    {{ \Carbon\Carbon::createFromDate(null, $m, 1)->locale('pt_BR')->isoFormat('MMMM') }}
+    {{ ucfirst(\Carbon\Carbon::createFromDate(null, $m, 1)->locale('pt_BR')->isoFormat('MMMM')) }}
 </option>
 
             @endforeach
@@ -89,7 +89,7 @@
                     label: 'Ocorrências',
                     data: [
                         {{ $statusCount['concluido'] ?? 0 }},
-                        {{ $statusCount['em andamento'] ?? 0 }},
+                        {{ $statusCount['em_andamento'] ?? 0 }},
                         {{ $statusCount['atrasado'] ?? 0 }}
                     ],
                     backgroundColor: ['green', 'orange', 'red']

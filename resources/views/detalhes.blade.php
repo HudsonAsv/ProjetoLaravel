@@ -61,7 +61,7 @@
 <!-- Imagem da ocorrência -->
 <div>
     <img src="{{ asset('storage/' . $ocorrencia->imagem) }}" alt="Imagem da Ocorrência" class="imagem-centralizada">
-    
+
     <!-- Data no canto inferior direito da imagem -->
     <div class="rodape-imagem">
         <div></div>
@@ -98,6 +98,7 @@
         <option value="em_andamento">Em Andamento</option>
         <option value="concluido">Concluído</option>
         <option value="atrasado">Atrasado</option>
+        <option value="rejeitado">Rejeitado</option>
     </select>
 
     <button type="submit">Atualizar Status</button>

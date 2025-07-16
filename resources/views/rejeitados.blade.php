@@ -42,8 +42,9 @@
 <div class="galeria-grid">
     @forelse ($rejeitadas as $ocorrencia)
         <div class="galeria-card">
+            <a href="{{ url('/ocorrencia/' . $ocorrencia->id) }}" style="text-decoration: none; color: inherit;">
             <div class="imagem-thumb">
-                <img src="{{ asset('images/sensitive-content.jpg') }}" alt="Conteúdo sensível" />
+                <img src="{{ Storage::url($ocorrencia->imagem) }}" alt="Conteúdo sensível" style="filter: blur(5px);" />
             </div>
 
             <h3>{{ $ocorrencia->titulo }}</h3>

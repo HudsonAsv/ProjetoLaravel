@@ -20,7 +20,8 @@ class GaleriaController extends Controller
 
     public function index(Request $request)
     {
-        $query = Ocorrencia::query();
+        $publicStatuses = ['recebido', 'concluido', 'em_andamento', 'atrasado'];
+        $query = Ocorrencia::whereIn('status', $publicStatuses);
         if ($request->filled('mes')) {
             $query->whereMonth('data_solicitacao', $request->mes);
         }
