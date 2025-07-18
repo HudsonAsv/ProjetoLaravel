@@ -18,7 +18,6 @@
     <p><strong>Categoria:</strong> {{ $ocorrencia->categoria->nome ?? 'N/A' }}</p>
     <p><strong>Tema:</strong> {{ $ocorrencia->tema->nome ?? 'N/A' }}</p>
 
-    <!-- Botão para editar status -->
     <form method="POST" action="{{ url('/ocorrencia/atualizar/' . $ocorrencia->id) }}">
         @csrf
         @method('PUT')

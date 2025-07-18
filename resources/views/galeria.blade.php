@@ -5,7 +5,6 @@
 @section('content')
     <h2>Galeria de Ocorrências</h2>
 
-    <!-- Formulário de Filtro -->
     <form method="GET" action="{{ url('/galeria') }}" style="margin-bottom: 20px;">
         <label>Mês:</label>
         <select name="mes">
@@ -41,7 +40,6 @@
         <button type="submit">Filtrar</button>
     </form>
 
-    <!-- Grid de Ocorrências -->
     <div class="galeria-grid">
         @forelse ($ocorrencias as $ocorrencia)
         <a href="{{ url('/ocorrencia/' . $ocorrencia->id) }}" style="text-decoration: none; color: inherit;">

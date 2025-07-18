@@ -19,19 +19,16 @@
 
         <h3>Atualizar status para o cidadão</h3>
 
-        <!-- Histórico -->
         <div>
             <label>Histórico de Atualizações:</label>
             <textarea class="form-control" placeholder="Digite uma atualização..."></textarea>
         </div>
 
-        <!-- Previsão -->
         <div>
             <label>Previsão de Conclusão:</label>
             <input type="date" class="form-control">
         </div>
 
-        <!-- Status -->
         <div>
             <label>Status Atual:</label>
             <select class="form-control">

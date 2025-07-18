@@ -21,8 +21,6 @@ class ComentarioController extends Controller
         $request->validate([
             'conteudo' => 'required|string|max:1000',
         ]);
-
-        // Chamada à Perspective API
         $response = Http::withOptions([
             'verify' => false,
         ])->post("https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=" . env('PERSPECTIVE_API_KEY'), [
@@ -35,14 +33,12 @@ class ComentarioController extends Controller
             ],
         ]);
 
-        // Verificação de toxicidade
         $score = $response['attributeScores']['TOXICITY']['summaryScore']['value'] ?? 0;
 
         if ($score >= 0.7) {
-            return back()->withErrors(['conteudo' => 'Comentário considerado ofensivo e foi bloqueado.']);
+            return back()->withErrors(['conteudo' => 'Comentário considerado ofensivo foi bloqueado.']);
         }
 
-        // Criação do comentário
         Comentario::create([
             'ocorrencia_id' => $ocorrenciaId,
             'user_id' => Auth::id(),
@@ -54,31 +50,45 @@ class ComentarioController extends Controller
 
     public function store(Request $request, Ocorrencia $ocorrencia)
     {
-        $validatedData = $request->validate([
+        $request->validate([
+            'ocorrencia_id' => 'required|exists:ocorrencias,id',
             'conteudo' => 'required|string|max:1000',
         ]);
-        
+
         $perspectiveKey = env('PERSPECTIVE_API_KEY');
+        $isToxic = false;
+
         if ($perspectiveKey) {
             $response = Http::post("https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=" . $perspectiveKey, [
-                "comment" => ["text" => $validatedData['conteudo']],
+                "comment" => ["text" => $request->conteudo],
+                "languages" => ["pt"],
                 "requestedAttributes" => ["TOXICITY" => new \stdClass()],
             ]);
 
-            $score = $response->json('attributeScores.TOXICITY.summaryScore.value');
-
-            if ($score >= 0.7) {
-                return response()->json(['message' => 'O seu comentário foi considerado inadequado e foi bloqueado.'], 422);
+            if ($response->successful()) {
+                $score = $response->json('attributeScores.TOXICITY.summaryScore.value');
+                if ($score >= 0.6) {
+                    $isToxic = true;
+                }
+            } else {
+                $errorMessage = $response->json('error.message', '');
+                if (!str_contains($errorMessage, 'does not support request languages')) {
+                    // Log::error('Erro inesperado da Perspective API: ' . $errorMessage);
+                }
             }
         }
+        if ($isToxic) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['conteudo' => 'O seu comentário foi considerado inadequado e foi bloqueado.']);
+        }
 
-        $comentario = $ocorrencia->comentarios()->create([
-            'conteudo' => $validatedData['conteudo'],
+        Comentario::create([
+            'ocorrencia_id' => $request->ocorrencia_id,
             'user_id' => Auth::id(),
+            'conteudo' => $request->conteudo,
         ]);
 
-        $comentario->load('user:id,name');
-
-        return response()->json($comentario, 201);
+        return redirect()->back()->with('success', 'Comentário enviado com sucesso!');
     }
 }

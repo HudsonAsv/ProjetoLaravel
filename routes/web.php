@@ -6,7 +6,7 @@ use App\Http\Controllers\OcorrenciaController;
 use App\Http\Controllers\GaleriaController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ComentarioController;
-use App\Http\Controllers\RejeitadosController; // <-- Adicionado
+use App\Http\Controllers\RejeitadosController;
 use App\Http\Controllers\AnaliseController;
 use App\Http\Controllers\PerfilController;
 use Illuminate\Support\Facades\Auth;

@@ -27,17 +27,14 @@ class OcorrenciaController extends Controller
 
         $ocorrencias = $query->with('categoria', 'tema')->get();
 
-        // Gráfico 1 – Status
         $statusCount = $ocorrencias
             ->groupBy('status')
             ->map(fn($group) => $group->count());
 
-        // Gráfico 2 – Categoria (usando nomes)
         $categoriaCount = $ocorrencias
             ->groupBy(fn($o) => $o->categoria->nome ?? 'Desconhecida')
             ->map->count();
 
-        // Gráfico 3 – Tema (usando nomes)
         $temaCount = $ocorrencias
             ->groupBy(fn($o) => $o->tema->nome ?? 'Desconhecido')
             ->map->count();

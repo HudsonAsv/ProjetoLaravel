@@ -68,18 +68,15 @@
 
 <header style="display: flex; justify-content: space-between; align-items: center; padding: 8px 20px; background-color: #701a1a; border-radius: 0 0 10px 10px;">
 
-    <!-- Avatar -->
     <div class="nav-left">
         <a href="{{ route('perfil') }}">
             <img src="{{ asset('images/avatar-placeholder.png') }}" width="45" height="45" style="border-radius: 50%;">
         </a>
     </div>
 
-    <!-- Navegação Central -->
     <div class="nav-center" style="display: flex; gap: 10px; align-items: center;">
         <a href="{{ url('/') }}" class="nav-btn">Home</a>
 
-        <!-- Botão suspenso -->
         <div class="dropdown">
             <button class="dropdown-toggle">Ocorrências ▾</button>
             <div class="dropdown-content">
@@ -92,7 +89,6 @@
         <a href="{{ url('/analise') }}" class="nav-btn">Em Análise</a>
         <a href="{{ url('/aguardando') }}" class="nav-btn">Aguardando Aprovação</a>
         <a href="{{ url('/andamento') }}" class="nav-btn">Em Andamento</a>
-        <!-- Botão Logout -->
         <form method="POST" action="{{ route('logout') }}" style="margin: 0; padding-left: 10px;">
             @csrf
             <button type="submit" class="logout-button">
@@ -101,7 +97,6 @@
         </form>
     </div>
 
-    <!-- Logo e título -->
     <div class="nav-left" style="display: flex; align-items: center; gap: 10px;">
         <span style="font-weight: bold; font-size: 18px;">VOZ<br>POPULAR</span>
         <img src="{{ asset('images/logo-prefeitura.png') }}" alt="Logo" height="50">

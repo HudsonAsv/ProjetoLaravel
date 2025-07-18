@@ -70,7 +70,6 @@ class OcorrenciaApiController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            //'titulo' => 'required|string|max:255',
             'descricao' => 'required|string',
             'rua' => 'required|string|max:255',
             'numero' => 'nullable|string|max:50',
@@ -82,6 +81,8 @@ class OcorrenciaApiController extends Controller
             'tema_id' => 'required|exists:temas,id',
             'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        $moderationStatus = 'recebido';
         $rejectionReason = null;
 
         $perspectiveKey = env('PERSPECTIVE_API_KEY');
@@ -92,87 +93,66 @@ class OcorrenciaApiController extends Controller
                 'requestedAttributes' => ['TOXICITY' => new \stdClass()],
             ]);
             $toxicity = $textResponse->json('attributeScores.TOXICITY.summaryScore.value');
-            if ($toxicity >= 0.8) {
-                $rejectionReason = 'Conteúdo textual inadequado.';
+
+            if ($toxicity >= env('PERSPECTIVE_REJECT_THRESHOLD', 0.7)) {
+                $moderationStatus = 'rejeitado';
+                $rejectionReason = 'Conteúdo textual considerado altamente inadequado.';
+            } elseif ($toxicity >= env('PERSPECTIVE_REVIEW_THRESHOLD', 0.5)) {
+                $moderationStatus = 'em_analise';
+                $rejectionReason = 'Conteúdo textual sinalizado para revisão.';
             }
         }
-        if ($rejectionReason === null && $request->hasFile('imagem')) {
+
+        if ($moderationStatus !== 'rejeitado' && $request->hasFile('imagem')) {
             $user = env('SIGHTENGINE_USER');
             $secret = env('SIGHTENGINE_SECRET');
 
             if ($user && $secret) {
-            $imageCheck = Http::asMultipart()->post('https://api.sightengine.com/1.0/check.json', [
+                $imageCheck = Http::asMultipart()->post('https://api.sightengine.com/1.0/check.json', [
                     ['name' => 'media', 'contents' => fopen($request->file('imagem')->getPathname(), 'r')],
                     ['name' => 'models', 'contents' => 'nudity,wad,offensive'],
                     ['name' => 'api_user', 'contents' => $user],
                     ['name' => 'api_secret', 'contents' => $secret],
-            ]);
+                ]);
 
-            if ($imageCheck->successful()) {
-                $nudityScore = $imageCheck->json('nudity.raw');
-                $weaponScore = $imageCheck->json('weapon');
-                $offensiveScore = $imageCheck->json('offensive.prob');
+                if ($imageCheck->successful()) {
+                    $rawNudityScore = $imageCheck->json('nudity.raw');
+                    $partialNudityScore = $imageCheck->json('nudity.partial');
+                    $weaponScore = $imageCheck->json('weapon');
 
-            if ($nudityScore > 0.7 || $weaponScore > 0.5 || $offensiveScore > 0.7) {
-                $rejectionReason = 'A imagem contém conteúdo impróprio.';
+                    if ($rawNudityScore > env('SIGHTENGINE_REJECT_THRESHOLD', 0.85) || $weaponScore > env('SIGHTENGINE_REJECT_THRESHOLD', 0.85)) {
+                        $moderationStatus = 'rejeitado';
+                        $rejectionReason = 'A imagem contém conteúdo altamente impróprio.';
+                    }
+                    elseif ($partialNudityScore > env('SIGHTENGINE_REVIEW_THRESHOLD', 0.6)) {
+                        if ($moderationStatus !== 'em_analise') {
+                            $moderationStatus = 'em_analise';
+                            $rejectionReason = 'A imagem foi sinalizada para revisão.';
+                        }
+                    }
                 }
             }
         }
-             if ($request->hasFile('imagem')) {
+
+        if ($request->hasFile('imagem')) {
             $data['imagem'] = $request->file('imagem')->store('ocorrencias', 'public');
-            }
         }
-        // 🔍 Verificação de toxicidade com Perspective API
-        /*$perspectiveKey = env('PERSPECTIVE_API_KEY');
-        $textResponse = Http::post("https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=$perspectiveKey", [
-            'comment' => ['text' => $request->descricao],
-            'languages' => ['pt'],
-            'requestedAttributes' => ['TOXICITY' => new \stdClass()],
-        ]);
-        $toxicity = $textResponse->json('attributeScores.TOXICITY.summaryScore.value');
-        if ($toxicity >= 0.8) {
-            return response()->json(['error' => 'Conteúdo textual considerado tóxico.'], 422);
-        }
-
-        $imagem = $request->file('imagem');
-        $path = $imagem->store('temp', 'public');
-        $url = asset("storage/$path");
-
-        $user = env('SIGHTENGINE_USER');
-        $secret = env('SIGHTENGINE_SECRET');
-
-        $imageCheck = Http::get('https://api.sightengine.com/1.0/check.json', [
-            'url' => $url,
-            'models' => 'nudity,wad,offensive',
-            'api_user' => $user,
-            'api_secret' => $secret,
-        ]);
-
-        if (
-            $imageCheck['nudity']['raw'] > 0.7 ||
-            $imageCheck['weapon'] > 0.5 ||
-            $imageCheck['offensive']['prob'] > 0.7
-        ) {
-            Storage::disk('public')->delete($path);
-            return response()->json(['error' => 'Imagem contém conteúdo impróprio.'], 422);
-        }
-
-        $finalPath = $imagem->store('ocorrencias', 'public');*/
 
         $tema = Tema::find($data['tema_id']);
         $dataSolicitacao = now();
         $data['titulo'] = "Ocorrência - " . $tema->nome . " - " . $dataSolicitacao->format('d/m/Y');
-        $data['status'] = 'recebido';
         $data['data_solicitacao'] = $dataSolicitacao;
         $data['user_id'] = Auth::id();
 
-        if ($rejectionReason !== null) {
-            $data['status'] = 'rejeitado';
-            $data['motivo_rejeicao'] = $rejectionReason;
-            Ocorrencia::create($data);
-            return response()->json(['message' => $rejectionReason], 422);
-        }
+        $data['status'] = $moderationStatus;
+        $data['motivo_rejeicao'] = $rejectionReason;
+
         $ocorrencia = Ocorrencia::create($data);
+
+        if ($moderationStatus === 'em_analise' || $moderationStatus === 'rejeitado') {
+             return response()->json(['message' => 'A sua ocorrência foi recebida e está em processo de moderação.'], 202); // 202 Accepted
+        }
+
         return response()->json(['message' => 'Ocorrência salva com sucesso!', 'ocorrencia' => $ocorrencia], 201);
     }
         public function minhasOcorrencias(Request $request)

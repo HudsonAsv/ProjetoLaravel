@@ -22,7 +22,6 @@
 
     <p><strong>Status:</strong> {{ ucfirst($ocorrencia->status) }}</p>
 
-    {{-- Comentários --}}
     <h3>Comentários</h3>
     @foreach($ocorrencia->comentarios as $comentario)
         <div class="comentario">

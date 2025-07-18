@@ -51,7 +51,6 @@ class GaleriaController extends Controller
 
     public function store(Request $request)
 {
-    // Valida antes de qualquer coisa
     $request->validate([
         'titulo' => 'required|string|max:100',
         'descricao' => 'required|string',
@@ -62,11 +61,9 @@ class GaleriaController extends Controller
         'imagem' => 'required|image|mimes:jpg,jpeg,png|max:2048',
     ]);
 
-    // Armazena imagem
     $imagemPath = $request->file('imagem')->store('ocorrencias', 'public');
     $imageUrl = asset('storage/' . $imagemPath);
 
-    // Analisa com o serviço
     $moderator = new ImageModerationService();
     $resultado = $moderator->moderateFromUrl($imageUrl);
 
@@ -74,7 +71,6 @@ class GaleriaController extends Controller
         return back()->withErrors(['imagem' => 'A imagem foi considerada imprópria.']);
     }
 
-    // Cria a ocorrência
     Ocorrencia::create([
         'titulo' => $request->titulo,
         'descricao' => $request->descricao,

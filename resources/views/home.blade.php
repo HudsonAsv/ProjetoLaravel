@@ -45,10 +45,8 @@
         <button type="submit">Filtrar</button>
     </form>
 
-    <!-- Gráfico de status -->
     <canvas id="graficoStatus" height="200"></canvas>
 
-    <!-- Gráfico de Categoria -->
 <div style="display: flex; align-items: center; justify-content: center; gap: 40px; margin: 20px auto; max-width: 800px;">
     <div style="width: 100%;">
         <canvas id="graficoCategoria"></canvas>
@@ -64,8 +62,6 @@
     </div>
 </div>
 
-
-    <!-- Gráfico de Tema -->
   <div style="display: flex; align-items: center; justify-content: center; gap: 40px; margin: 20px auto; max-width: 800px;">
     <div style="width: 100%;">
         <canvas id="graficoTema"></canvas>
@@ -198,7 +194,6 @@
         });
     </script>
 
-    <!---RECENTES---->
     <h2 style="margin-top: 40px;">Ocorrências Recentes</h2>
 
 <div class="galeria-grid">
