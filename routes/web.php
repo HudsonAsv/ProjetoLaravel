@@ -56,11 +56,16 @@ Route::get('/login', function () {
 
 Route::post('/login', function () {
     $credenciais = request()->only('email', 'password');
-
-    if (Auth::attempt($credenciais, request()->filled('remember'))) {
-        return redirect()->intended('/');
+    if(Auth::attempt($credenciais, request()->filled('remember'))){
+        $user = Auth::user();
+        if($user->role === 'admin'){
+            request()->session()->regenerate();
+            return redirect()->intended('/');
+        }else {
+            Auth::logout();
+            return back()->with('error', 'Acesso negado. Esta área é restrita a administradores.');
+        }
     }
-
     return back()->with('error', 'Email ou senha inválidos');
 })->name('login');
 
